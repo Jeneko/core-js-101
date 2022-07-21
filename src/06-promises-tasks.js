@@ -54,15 +54,8 @@ function willYouMarryMe(isPositiveAnswer) {
  *    })
  *
  */
-async function processAllPromises(array) {
-  const results = [];
-  for (const promise of array) {
-    try {
-      const curRes = await promise;
-      results.push(curRes);
-    } catch { "C'est la vie" }
-  }
-  return results;
+function processAllPromises(array) {
+  return Promise.all(array);
 }
 
 /**
@@ -105,20 +98,48 @@ function getFastestPromise(array) {
  *    });
  *
  */
+
 async function chainPromises(array, action) {
-  let result;
-  for (const promise of array) {
-    try {
-      const curRes = await promise;
-      if (result === undefined) {
-        result = curRes;
-      } else {
-        result = action(result, curRes);
-      }
-    } catch { "C'est la vie" }
-  }
-  return result;
+  return new Promise((resolve) => {
+    function processResult(result, process) {
+      return result.reduce((acc, el) => process(acc, el));
+    }
+
+    const result = [];
+    let counter = 0;
+
+    array.forEach((promise) => {
+      promise.then((res) => {
+        result.push(res);
+        counter += 1;
+        if (counter >= array.length) {
+          resolve(processResult(result, action));
+        }
+      }).catch(() => {
+        counter += 1;
+        if (counter >= array.length) {
+          resolve(processResult(result, action));
+        }
+      });
+    });
+  });
 }
+
+// async function chainPromises(array, action) {
+//   let result;
+//   for (const promise of array) {
+//     try {
+//       const curRes = await promise;
+//       if (result === undefined) {
+//         result = curRes;
+//       } else {
+//         result = action(result, curRes);
+//       }
+//     }
+//     catch (err) { }
+//   }
+//   return result;
+// }
 
 module.exports = {
   willYouMarryMe,

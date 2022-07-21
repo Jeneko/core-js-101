@@ -110,7 +110,8 @@ function getLinearEquationRoot(a, b) {
  *   (0,1) (1,2)     => 0
  */
 function getAngleBetweenVectors(x1, y1, x2, y2) {
-  return Math.acos((x1 * x2 + y1 * y2) / (Math.sqrt(x1 ** 2 + y1 ** 2) * Math.sqrt(x2 ** 2 + y2 ** 2)));
+  const rad = (x1 * x2 + y1 * y2) / (Math.sqrt(x1 ** 2 + y1 ** 2) * Math.sqrt(x2 ** 2 + y2 ** 2));
+  return Math.acos(rad);
 }
 
 /**
@@ -202,7 +203,7 @@ function roundToPowerOfTen(num, pow) {
  *   17 => true
  */
 function isPrime(n) {
-  for (i = 2; i <= n / 2; i++) {
+  for (let i = 2; i <= n / 2; i += 1) {
     if (n % i === 0) return false;
   }
   return true;
@@ -225,7 +226,7 @@ function isPrime(n) {
  */
 function toNumber(value, def) {
   const result = Number(value);
-  if (isNaN(result)) return def;
+  if (Number.isNaN(result)) return def;
   return result;
 }
 

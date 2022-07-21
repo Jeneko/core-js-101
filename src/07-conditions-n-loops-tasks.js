@@ -54,9 +54,10 @@ function getFizzBuzz(num) {
  */
 function getFactorial(n) {
   let result = n;
-  while (n > 1) {
-    n--;
-    result *= n;
+  let count = n;
+  while (count > 1) {
+    count -= 1;
+    result *= count;
   }
   return result;
 }
@@ -76,7 +77,7 @@ function getFactorial(n) {
  */
 function getSumBetweenNumbers(n1, n2) {
   let result = n1;
-  for (let i = n1 + 1; i <= n2; i++) {
+  for (let i = n1 + 1; i <= n2; i += 1) {
     result += i;
   }
   return result;
@@ -137,18 +138,18 @@ function isTriangle(a, b, c) {
  */
 function doRectanglesOverlap(rect1, rect2) {
   if (
-    rect2.top >= rect1.top &&
-    rect2.top <= rect1.top + rect1.height &&
-    rect2.left >= rect1.left &&
-    rect2.left <= rect1.left + rect1.width
+    rect2.top >= rect1.top
+    && rect2.top <= rect1.top + rect1.height
+    && rect2.left >= rect1.left
+    && rect2.left <= rect1.left + rect1.width
   ) {
     return true;
   }
   if (
-    rect1.top >= rect2.top &&
-    rect1.top <= rect2.top + rect2.height &&
-    rect1.left >= rect2.left &&
-    rect1.left <= rect2.left + rect2.width
+    rect1.top >= rect2.top
+    && rect1.top <= rect2.top + rect2.height
+    && rect1.left >= rect2.left
+    && rect1.left <= rect2.left + rect2.width
   ) {
     return true;
   }
@@ -302,14 +303,14 @@ function isCreditCardNumber(ccn) {
   const arr = String(ccn).slice(0, -1).split('');
 
   const { sum } = arr.reduceRight((acc, el) => {
-    el = Number(acc.even ? el * 2 : el);
-    acc.sum += el > 9 ? el - 9 : el;
+    const curVal = Number(acc.even ? el * 2 : el);
+    acc.sum += curVal > 9 ? curVal - 9 : curVal;
     acc.even = !acc.even;
     return acc;
   }, { sum: 0, even: true });
 
   if (checkDigit === 0 && sum % 10 === 0) return true;
-  if (checkDigit === 10 - sum % 10) return true;
+  if (checkDigit === 10 - (sum % 10)) return true;
   return false;
 }
 
@@ -328,10 +329,11 @@ function isCreditCardNumber(ccn) {
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
 function getDigitalRoot(num) {
-  while (String(num).length > 1) {
-    num = String(num).split('').reduce((acc, el) => +acc + +el);
+  let curNum = num;
+  while (String(curNum).length > 1) {
+    curNum = String(curNum).split('').reduce((acc, el) => +acc + +el);
   }
-  return num;
+  return curNum;
 }
 
 
@@ -358,7 +360,7 @@ function getDigitalRoot(num) {
  */
 function isBracketsBalanced(str) {
   const stack = [];
-  for (let i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i += 1) {
     if (str[i] === '[' || str[i] === '(' || str[i] === '{' || str[i] === '<') {
       stack.push(str[i]);
     } else {
@@ -420,11 +422,13 @@ function toNaryString(num, n) {
  */
 function getCommonDirectoryPath(pathes) {
   const commonParts = [];
-  const arr = pathes.map(el => el.split('/')).sort((a, b) => a.length - b.length);
+  const arr = pathes.map((el) => el.split('/')).sort((a, b) => a.length - b.length);
 
-  outer: for (let i = 0; i < arr[0].length; i++) {
-    for (let j = 1; j < arr.length; j++) {
-      if (arr[j][i] !== arr[0][i]) break outer;
+  for (let i = 0; i < arr[0].length; i += 1) {
+    for (let j = 1; j < arr.length; j += 1) {
+      if (arr[j][i] !== arr[0][i]) {
+        return commonParts.length ? commonParts.join('/').concat('/') : '';
+      }
     }
     commonParts.push(arr[0][i]);
   }
@@ -455,14 +459,14 @@ function getMatrixProduct(m1, m2) {
   const result = [];
 
   // Rows
-  for (let i = 0; i < m1.length; i++) {
+  for (let i = 0; i < m1.length; i += 1) {
     const curRow = m1[i];
     const resRow = [];
 
     // Cols
-    for (let j = 0; j < m2[0].length; j++) {
-      const curCol = m2.map(el => el[j]);
-      const curVal = curRow.reduce((acc, el, i) => acc + curRow[i] * curCol[i], 0);
+    for (let j = 0; j < m2[0].length; j += 1) {
+      const curCol = m2.map((el) => el[j]);
+      const curVal = curRow.reduce((acc, el, k) => acc + curRow[k] * curCol[k], 0);
       resRow.push(curVal);
     }
 
@@ -503,29 +507,29 @@ function getMatrixProduct(m1, m2) {
  *
  */
 function evaluateTicTacToePosition(position) {
-  const isLine = (a, b, c) => (a === b && b === c) ? a : undefined;
+  const isLine = (a, b, c) => ((a === b && b === c) ? a : undefined);
   let result;
 
   // Horizontal Lines
-  result = isLine(...position[0])
+  result = isLine(...position[0]);
   if (result) return result;
-  result = isLine(...position[1])
+  result = isLine(...position[1]);
   if (result) return result;
-  result = isLine(...position[2])
+  result = isLine(...position[2]);
   if (result) return result;
 
   // Vertical Lines
-  result = isLine(...position.map(el => el[0]));
+  result = isLine(...position.map((el) => el[0]));
   if (result) return result;
-  result = isLine(...position.map(el => el[1]))
+  result = isLine(...position.map((el) => el[1]));
   if (result) return result;
-  result = isLine(...position.map(el => el[2]))
+  result = isLine(...position.map((el) => el[2]));
   if (result) return result;
 
   // Diagonals
-  result = isLine(...position.map((el, i) => el[i]))
+  result = isLine(...position.map((el, i) => el[i]));
   if (result) return result;
-  result = isLine(...position.map((el, i) => el[2 - i]))
+  result = isLine(...position.map((el, i) => el[2 - i]));
   if (result) return result;
 
   return undefined;

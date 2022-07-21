@@ -24,7 +24,7 @@
  *
  */
 function getComposition(f, g) {
-  return x => f(g(x));
+  return (x) => f(g(x));
 }
 
 
@@ -45,7 +45,7 @@ function getComposition(f, g) {
  *
  */
 function getPowerFunction(exponent) {
-  return x => x ** exponent;
+  return (x) => x ** exponent;
 }
 
 
@@ -62,19 +62,19 @@ function getPowerFunction(exponent) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom() {
-  return x => {
-    switch (arguments.length) {
+function getPolynom(...rest) {
+  return (x) => {
+    switch (rest.length) {
       case 3:
-        return arguments[0] * x ** 2 + arguments[1] * x + arguments[2];
+        return rest[0] * x ** 2 + rest[1] * x + rest[2];
       case 2:
-        return arguments[0] * x + arguments[1];
+        return rest[0] * x + rest[1];
       case 1:
-        return arguments[0];
+        return rest[0];
       default:
         return null;
     }
-  }
+  };
 }
 
 
@@ -94,7 +94,13 @@ function getPolynom() {
  */
 function memoize(func) {
   let result;
-  return () => result ? result : result = func();
+  return () => {
+    if (result) {
+      return result;
+    }
+    result = func();
+    return result;
+  };
 }
 
 
@@ -114,15 +120,17 @@ function memoize(func) {
  * retryer() => 2
  */
 function retry(func, attempts) {
-  return function () {
-    while (attempts > 0) {
+  let curAttempts = attempts;
+  return () => {
+    while (curAttempts > 0) {
       try {
         return func();
-      } catch {
-        attempts--;
+      } catch (err) {
+        curAttempts -= 1;
       }
     }
-  }
+    return func();
+  };
 }
 
 
@@ -150,19 +158,9 @@ function retry(func, attempts) {
  *
  */
 function logger(func, logFunc) {
-  return function (...rest) {
-    const argList = argsFormat(rest);
-
-    const start = `${func.name}(${argList}) starts`;
-    logFunc(start);
-    const result = func(...rest);
-    const end = `${func.name}(${argList}) ends`;
-    logFunc(end);
-
-    return result;
-
+  return (...rest) => {
     function argsFormat(args) {
-      return args.map(el => {
+      return args.map((el) => {
         if (el instanceof Array) {
           return `[${argsFormat(el)}]`;
         }
@@ -172,7 +170,17 @@ function logger(func, logFunc) {
         return el;
       });
     }
-  }
+
+    const argList = argsFormat(rest);
+
+    const start = `${func.name}(${argList}) starts`;
+    logFunc(start);
+    const result = func(...rest);
+    const end = `${func.name}(${argList}) ends`;
+    logFunc(end);
+
+    return result;
+  };
 }
 
 
@@ -212,7 +220,11 @@ function partialUsingArguments(fn, ...args1) {
  *   getId10() => 11
  */
 function getIdGeneratorFunction(startFrom) {
-  return () => startFrom++;
+  let val = startFrom - 1;
+  return () => {
+    val += 1;
+    return val;
+  };
 }
 
 

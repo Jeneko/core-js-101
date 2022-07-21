@@ -23,9 +23,9 @@
 function Rectangle(width, height) {
   this.width = width;
   this.height = height;
-  this.getArea = function () {
+  this.getArea = function getArea() {
     return this.width * this.height;
-  }
+  };
 }
 
 
@@ -56,7 +56,7 @@ function getJSON(obj) {
  *
  */
 function fromJSON(proto, json) {
-  obj = JSON.parse(json);
+  const obj = JSON.parse(json);
   Object.setPrototypeOf(obj, proto);
   return obj;
 }
@@ -120,76 +120,76 @@ class Selector {
   constructor(selector) {
     this.selector = [selector];
   }
-  element() {
+
+  element(value) {
     this.validate('element');
     this.selector.push({ type: 'element', value });
     return this;
   }
+
   id(value) {
     this.validate('id');
     this.selector.push({ type: 'id', value });
     return this;
   }
+
   class(value) {
     this.validate('class');
     this.selector.push({ type: 'class', value });
     return this;
   }
+
   attr(value) {
     this.validate('attr');
     this.selector.push({ type: 'attr', value });
     return this;
   }
+
   pseudoClass(value) {
     this.validate('pseudo-class');
     this.selector.push({ type: 'pseudo-class', value });
     return this;
   }
+
   pseudoElement(value) {
     this.validate('pseudo-element');
     this.selector.push({ type: 'pseudo-element', value });
     return this;
   }
+
   stringify() {
     return this.selector.reduce((acc, el) => {
       switch (el.type) {
         case 'element':
-          return acc += el.value;
+          return acc + el.value;
         case 'id':
-          return acc += `#${el.value}`;
+          return `${acc}#${el.value}`;
         case 'class':
-          return acc += `.${el.value}`;
+          return `${acc}.${el.value}`;
         case 'attr':
-          return acc += `[${el.value}]`;
+          return `${acc}[${el.value}]`;
         case 'pseudo-class':
-          return acc += `:${el.value}`;
+          return `${acc}:${el.value}`;
         case 'pseudo-element':
-          return acc += `::${el.value}`;
+          return `${acc}::${el.value}`;
+        default:
+          return acc;
       }
     }, '');
   }
+
   validate(type) {
-    if (type === "element" || type === "id" || type === "pseudo-element") {
-      if (this.selector.find(el => el.type === type)) {
+    if (type === 'element' || type === 'id' || type === 'pseudo-element') {
+      if (this.selector.find((el) => el.type === type)) {
         throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
       }
     }
 
     const correctOrder = ['element', 'id', 'class', 'attr', 'pseudo-class', 'pseudo-element'];
-    if (correctOrder.indexOf(type) < correctOrder.indexOf(this.selector[this.selector.length - 1].type)) {
+    const index = correctOrder.indexOf(this.selector[this.selector.length - 1].type);
+    if (correctOrder.indexOf(type) < index) {
       throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
     }
-  }
-}
-
-class Combine {
-  constructor(selector1, combinator, selector2) {
-    this.selector1 = selector1;
-    this.selector2 = selector2;
-    this.combinator = combinator;
-  }
-  stringify() {
-    return `${this.selector1.stringify()} ${this.combinator} ${this.selector2.stringify()}`;
   }
 }
 
@@ -219,7 +219,14 @@ const cssSelectorBuilder = {
   },
 
   combine(selector1, combinator, selector2) {
-    return new Combine(selector1, combinator, selector2);
+    return {
+      selector1,
+      selector2,
+      combinator,
+      stringify() {
+        return `${this.selector1.stringify()} ${this.combinator} ${this.selector2.stringify()}`;
+      },
+    };
   },
 };
 

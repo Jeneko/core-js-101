@@ -87,8 +87,8 @@ function timeSpanToString(startDate, endDate) {
     hr: 1000 * 60 * 60,
     min: 1000 * 60,
     sec: 1000,
-    ms: 1
-  }
+    ms: 1,
+  };
 
   let diff = endDate - startDate;
 
@@ -103,10 +103,10 @@ function timeSpanToString(startDate, endDate) {
 
   let ms = Math.floor(diff / msIn.ms);
 
-  hrs = ("0" + hrs).slice(-2);
-  min = ("0" + min).slice(-2);
-  sec = ("0" + sec).slice(-2);
-  ms = ("00" + ms).slice(-3);
+  hrs = (`0${hrs}`).slice(-2);
+  min = (`0${min}`).slice(-2);
+  sec = (`0${sec}`).slice(-2);
+  ms = (`00${ms}`).slice(-3);
 
   return `${hrs}:${min}:${sec}.${ms}`;
 }
@@ -130,7 +130,7 @@ function timeSpanToString(startDate, endDate) {
  */
 function angleBetweenClockHands(date) {
   const hrsToGrad = (hr, min) => (hr % 12) * 30 + min * 0.5;
-  const minsToGrad = min => min * 6;
+  const minsToGrad = (min) => min * 6;
 
   const hrsGrad = hrsToGrad(date.getUTCHours(), date.getUTCMinutes());
   const minsGrad = minsToGrad(date.getUTCMinutes());
@@ -140,7 +140,7 @@ function angleBetweenClockHands(date) {
     diffGrad -= 180;
   }
 
-  const diffRad = diffGrad / 180 * Math.PI;
+  const diffRad = (diffGrad / 180) * Math.PI;
   return diffRad;
 }
 
